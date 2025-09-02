@@ -1,0 +1,60 @@
+{
+  "schools": [
+    {
+      "name": "UCSD",
+      "state": "CA",
+      "portalHint": "AHP",
+      "requirements": {
+        "medical_max": 100000,
+        "deductible": 500,
+        "evacuation": 50000,
+        "repatriation": 25000
+      }
+    },
+    {
+      "name": "UCLA",
+      "state": "CA",
+      "portalHint": "AHP",
+      "requirements": {
+        "medical_max": 100000,
+        "deductible": 500,
+        "evacuation": 50000,
+        "repatriation": 25000
+      }
+    },
+    {
+      "name": "USC",
+      "state": "CA",
+      "portalHint": "Aetna",
+      "requirements": {
+        "medical_max": 100000,
+        "deductible": 500,
+        "evacuation": 50000,
+        "repatriation": 25000
+      }
+    },
+    {
+      "name": "NYU",
+      "state": "NY",
+      "portalHint": "Gallagher",
+      "requirements": {
+        "medical_max": 100000,
+        "deductible": 1500,
+        "evacuation": 50000,
+        "repatriation": 25000
+      }
+    },
+    {
+      "name": "NEU",
+      "state": "MA",
+      "portalHint": "Gallagher",
+      "requirements": {
+        "medical_max": 100000,
+        "deductible": 500,
+        "evacuation": 50000,
+        "repatriation": 25000
+      }
+    }
+  ]
+}
+

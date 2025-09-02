@@ -1,47 +1,36 @@
-//
-//  HomeView.swift
-//  MeibaoApp
-//
-//  首页：学校选择 + 上传占位（点击后进入校验页）
-//
-
 import SwiftUI
 
 struct HomeView: View {
-    @State private var selectedSchool: School? = MockDataService.sampleSchools.first
+    @EnvironmentObject private var router: AppRouter
+
+    @State private var schools: [School] = MockDataService.loadSchoolsFromJSON()
+    @State private var selectedSchool: School? = nil
     @State private var showUploadedToast = false
-    @State private var goCheck = false
 
     var body: some View {
         VStack(spacing: 20) {
-            Text("美保评估 · MVP")
-                .font(.title2.bold())
+            Text("美保评估 · MVP").font(.title2.bold())
 
             Picker("选择学校", selection: $selectedSchool) {
-                ForEach(MockDataService.sampleSchools) { school in
-                    Text("\(school.name) (\(school.state))")
-                        .tag(Optional(school))
+                ForEach(schools) { school in
+                    Text("\(school.name) (\(school.state))").tag(Optional(school))
                 }
             }
-            .pickerStyle(.wheel)
+            .pickerStyle(.wheel)        // 若跑 macOS 目标可改 .menu/.segmented
             .frame(height: 140)
-            .navigationDestination(isPresented: $goCheck) {
-                CheckView(school: selectedSchool ?? MockDataService.sampleSchools[0])
-            }
-
+            .onAppear { if selectedSchool == nil { selectedSchool = schools.first } }
 
             Button {
-                // 模拟上传
+                // 模拟上传 → 记录选择 → 切到 Check 标签
                 showUploadedToast = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-                    goCheck = true
+                router.selectedSchool = selectedSchool
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    router.selectedTab = .check
                 }
             } label: {
                 Label("上传 PDF/链接（占位）", systemImage: "square.and.arrow.up")
             }
             .buttonStyle(.borderedProminent)
-
-            
 
             if showUploadedToast {
                 Text("已模拟上传 ✓").font(.footnote).foregroundStyle(.green)
@@ -55,6 +44,6 @@ struct HomeView: View {
 }
 
 #Preview {
-    NavigationStack { HomeView() }
+    NavigationStack { HomeView().environmentObject(AppRouter()) }
 }
 

@@ -1,10 +1,3 @@
-//
-//  ResultView.swift
-//  MeibaoApp
-//
-//  结果页：结论卡片 + 证据列表；按钮生成材料包（iOS16 友好写法）
-//
-
 import SwiftUI
 
 private extension ComplianceStatus {
@@ -26,12 +19,13 @@ private extension ComplianceStatus {
 
 struct ResultView: View {
     let result: ComplianceCheckResult
-    @State private var goPackage = false
+    @EnvironmentObject private var router: AppRouter
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                // 结论卡
+                // 状态卡
                 HStack {
                     Circle().fill(result.status.color).frame(width: 12, height: 12)
                     Text("合规结论：\(result.status.title)")
@@ -43,13 +37,14 @@ struct ResultView: View {
                 .background(.thinMaterial)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
 
+                // 风险
                 if !result.risks.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("风险提示")
-                            .font(.headline)
+                        Text("风险与差距").font(.headline)
                         ForEach(result.risks, id: \.self) { r in
-                            Label(r, systemImage: "exclamationmark.triangle")
+                            Label(r, systemImage: "exclamationmark.triangle.fill")
                                 .foregroundStyle(.orange)
+                                .font(.subheadline)
                         }
                     }
                     .padding()
@@ -57,7 +52,7 @@ struct ResultView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
 
-                // 证据列表
+                // 证据
                 VStack(alignment: .leading, spacing: 12) {
                     Text("证据（溯源）").font(.headline)
                     ForEach(result.evidences) { ev in
@@ -65,26 +60,32 @@ struct ResultView: View {
                     }
                 }
 
+                // 操作
                 Button {
-                    goPackage = true
+                    router.selectedTab = .package
                 } label: {
                     Label("生成材料包", systemImage: "shippingbox")
                 }
                 .buttonStyle(.borderedProminent)
+
+                Button {
+                    router.selectedTab = .home
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { dismiss() }
+                } label: {
+                    Label("返回首页", systemImage: "house")
+                }
+                .buttonStyle(.bordered)
             }
             .padding()
         }
         .navigationTitle("结果页")
-        // 👇 用 navigationDestination 代替旧的 NavigationLink(isActive:)
-        .navigationDestination(isPresented: $goPackage) {
-            PackageView()
-        }
     }
 }
 
 #Preview {
     NavigationStack {
-        ResultView(result: MockDataService.sampleResultPass)
+        ResultView(result: MockDataService.sampleResultFail)
+            .environmentObject(AppRouter())
     }
 }
 
